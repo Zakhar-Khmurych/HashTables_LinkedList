@@ -1,0 +1,105 @@
+using System.Net.Sockets;
+
+namespace HashTable
+{
+    public class KeyValuePair
+    {
+        private string _Key;
+        public string Key { get; }
+        public string Value;
+
+        public KeyValuePair(string key, string value)
+        {
+            Key = key;
+            Value = value;
+        }
+    }
+
+    public class LinkedListNode
+    {
+        public KeyValuePair NodeValue { get; }
+        public LinkedListNode Next { get; set; }
+
+        public LinkedListNode(KeyValuePair nodeValue)
+        {
+            NodeValue = nodeValue;
+        }
+    }
+
+    public class LinkedList
+    {
+        private LinkedListNode _first;
+
+        public void Add(KeyValuePair pair)
+        {
+            LinkedListNode node = _first;
+            if (_first == null)
+            {
+                _first = new LinkedListNode(pair);
+            }
+            else
+            {
+                while (node.Next != null)
+                {
+                    node = node.Next;
+                }
+
+                node.Next = new LinkedListNode(pair);
+            }
+        }
+
+        public void RemoveByKey(string key)
+        {
+            LinkedListNode node = _first;
+            LinkedListNode prev = null;
+            if (_first.NodeValue.Key == key && _first.Next == null)
+            {
+                _first = null;
+            }
+            else
+            {
+                while (node.Next != null)
+                {
+                    if (_first.NodeValue.Key == key)
+                    {
+                        _first = node.Next;
+                        break;
+                    }
+
+                    prev = node;
+                    node = node.Next;
+                    if (node.NodeValue.Key == key && node.Next == null)
+                    {
+                        prev = null;
+                        break;
+                    }
+                    prev.Next = node.Next;
+                }
+            }
+        }
+        
+        public KeyValuePair GetItemWithKey(string key)
+        {
+            LinkedListNode node = _first;
+            while (node.Next != null)
+            {
+                if (node.NodeValue.Key == key)
+                {
+                    KeyValuePair pair = new KeyValuePair(key, node.NodeValue.Value);
+                    return pair;
+                }
+                node = node.Next;
+                if (node.Next == null)
+                {
+                    if (node.NodeValue.Key == key)
+                    {
+                        KeyValuePair pair = new KeyValuePair(key, node.NodeValue.Value);
+                        return pair;
+                    }
+                }
+            }
+            
+            return new KeyValuePair(null, null);
+        }
+    }
+}
