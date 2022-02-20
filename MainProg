@@ -1,0 +1,41 @@
+using System;
+using System.IO;
+
+namespace HashTable
+{
+    class Program
+    {
+        public static void Main()
+        {
+            string pathToFile = @"C:\Users\Kate\Desktop\University\Programming\dictionary.txt";
+            string[] allLines = File.ReadAllLines(pathToFile);
+            StringsDictionary dict = SortDict(allLines);
+            InteractionWithDict(dict);
+            Console.WriteLine();
+        }
+
+        private static void InteractionWithDict(StringsDictionary dict)
+        {
+            Console.WriteLine("Do you want to get definition? y or n");
+            while (Console.ReadLine() == "y")
+            {
+                Console.WriteLine("Enter key:");
+                string inputKey = Console.ReadLine();
+                Console.WriteLine(dict.Get(inputKey));
+                Console.WriteLine("Do you want to get definition? y or n");
+            }
+        }
+
+        private static StringsDictionary SortDict(string[] allLines)
+        {
+            StringsDictionary dictionary = new StringsDictionary();
+            foreach (var str in allLines)
+            {
+                string[] splited = str.Split(";", 2);
+                dictionary.Add(splited[0], splited[1]);
+            }
+
+            return dictionary;
+        }
+    }
+}
