@@ -1,11 +1,18 @@
+using System;
+using System.Collections.Generic;
+
 namespace HashTable
 {
     public class StringsDictionary
     {
         private const int InitialSize = 10;
+        
+        private int _newSize = InitialSize;
+        private int _notEmpty;
 
         private LinkedList[] _buckets = new LinkedList[InitialSize];
-
+        
+        
         public void Add(string key, string value)
         {
             var pair = new KeyValuePair(key, value);
@@ -13,8 +20,56 @@ namespace HashTable
             if (_buckets[hash] == null)
             {
                 _buckets[hash] = new LinkedList();
+                _notEmpty += 1;
             }
             _buckets[hash].Add(pair);
+            CheckHashTableLoaded();
+        }
+
+        private void CheckHashTableLoaded()
+        {
+            double loadFactor = CountLoadFactor();
+            if (loadFactor > 0.8)
+            {
+                Console.WriteLine($"loadFactor: {loadFactor}");
+                ExtendBuckets();
+            }
+        }
+
+        private double CountLoadFactor()
+        {
+            return (double)_notEmpty / _newSize;
+        }
+        private void ExtendBuckets()
+        {
+            _notEmpty = 0;
+            _newSize *= 10;
+            Console.WriteLine($"newSize: {_newSize}");
+            List<LinkedListNode> allPairs = GetAllPairs();
+            _buckets = new LinkedList[_newSize];
+            AddAllPairsToDict(allPairs);
+        }
+
+        private void AddAllPairsToDict(List<LinkedListNode> allPairs)
+        {
+            foreach (LinkedListNode pair in allPairs)
+            {
+                Add(pair.NodeValue.Key, pair.NodeValue.Value);
+            }
+        }
+
+        private List<LinkedListNode> GetAllPairs()
+        {
+            List<LinkedListNode> allPairs = new List<LinkedListNode>();
+            foreach (LinkedList bucket in _buckets)
+            {
+                if (bucket == null)
+                {
+                    continue;
+                }
+                allPairs.AddRange( bucket.AllPairs());
+            }
+            return allPairs;
         }
 
         public void Remove(string key)
@@ -31,12 +86,12 @@ namespace HashTable
         }
 
 
-        public static int CalculateHash(string key)
+        private int CalculateHash(string key)
         {
             int total = 0;
             foreach (var letter in key)
             {
-                total = (total * 17 + letter) % 10;
+                total = (total * 17 + letter) % _newSize;
             }
             return total;
         }
