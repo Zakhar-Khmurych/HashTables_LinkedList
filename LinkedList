@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Net.Sockets;
 
 namespace HashTable
@@ -100,6 +101,19 @@ namespace HashTable
             }
             
             return new KeyValuePair(null, null);
+        }
+
+        public List<LinkedListNode> AllPairs()
+        {
+            List<LinkedListNode> allPairs = new List<LinkedListNode>();
+            LinkedListNode node = _first;
+            
+            while (node != null)
+            {
+                allPairs.Add(node);
+                node = node.Next;
+            }
+            return allPairs;
         }
     }
 }
